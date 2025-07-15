@@ -167,7 +167,11 @@ async function showPopup(targetElem, fullName) {
   popup.className = "rmp-popup";
 
   // Fetch saved settings for theme and color
-  chrome.storage.sync.get(["theme", "primaryColor", "textColor"], (settings) => {
+  chrome.storage.local.get(["theme", "primaryColor", "textColor"], (settings) => {
+    if (!settings || typeof settings !== 'object') {
+    settings = {};
+    } 
+    
     let bgColor = "#ffffff";
     let textColor = "#000000";
 

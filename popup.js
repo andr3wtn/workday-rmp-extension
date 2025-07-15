@@ -3,7 +3,7 @@ console.log("popup.js loaded");
 document.addEventListener("DOMContentLoaded", () => {
   populateSemesterSelect();
 
-  chrome.storage.sync.get(["lastUsedSemester", "lastUsedAcademicLevels"], (data) => {
+  chrome.storage.local.get(["lastUsedSemester", "lastUsedAcademicLevels"], (data) => {
     const { lastUsedSemester, lastUsedAcademicLevels } = data;
 
     if (!lastUsedSemester && !lastUsedAcademicLevels) {
@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const optionsContainer = document.querySelector(".options-container");
 
   // Load saved settings
-  chrome.storage.sync.get(["theme", "primaryColor", "textColor"], (data) => {
+  chrome.storage.local.get(["theme", "primaryColor", "textColor"], (data) => {
     console.log("[Popup] Loaded settings:", data);
 
     if (data.theme) theme.value = data.theme;
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateBackground(selectedTheme, selectedColor, selectedTextColor);
 
-    chrome.storage.sync.set({ theme: selectedTheme }, () => {
+    chrome.storage.local.set({ theme: selectedTheme }, () => {
       console.log("[Popup] Theme saved");
     });
   });
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const color = primaryColor.value;
     if (theme.value === "custom") {
       updateBackground("custom", color, textColor.value);
-      chrome.storage.sync.set({ primaryColor: color }, () => {
+      chrome.storage.local.set({ primaryColor: color }, () => {
         console.log("[Popup] Background color saved:", color);
       });
     }
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const color = textColor.value;
     if (theme.value === "custom") {
       updateBackground("custom", primaryColor.value, color);
-      chrome.storage.sync.set({ textColor: color }, () => {
+      chrome.storage.local.set({ textColor: color }, () => {
         console.log("[Popup] Text color saved:", color);
       });
     }
@@ -137,17 +137,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Save button click
   saveBtn.addEventListener("click", () => {
-    chrome.storage.sync.set({
+    const settings = {
       theme: theme.value,
       primaryColor: primaryColor.value,
       textColor: textColor.value
-    }, () => {
-      console.log("[Popup] Settings saved");
+    };
 
-      saveBtn.innerText = "Saved!";
-      setTimeout(() => saveBtn.innerText = "Save", 2000);
+    chrome.storage.local.set(settings, () => {
+      if (chrome.runtime.lastError) {
+        console.error("Error saving settings:", chrome.runtime.lastError);
+        alert("Failed to save settings.");
+      } else {
+        console.log("[Popup] Settings saved:", settings);
+        saveBtn.innerText = "Saved!";
+        setTimeout(() => saveBtn.innerText = "Save", 2000);
+      }
     });
   });
+
 
   // // Switch to More Settings view
   // openOptions.addEventListener("click", () => {
@@ -178,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
       alert('Please select at least one academic level!');
     }
 
-    chrome.storage.sync.set({
+    chrome.storage.local.set({
       lastUsedSemester: `${season} ${year}`,
       lastUsedAcademicLevels: academicLevels
     }, () => { console.log('Last used settings saved.')});
