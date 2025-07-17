@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateBackground(theme.value, primaryColor.value, textColor.value);
 
-    const isCustom = theme.value === "custom";
-    colorLabel.style.display = isCustom ? "block" : "none";
-    textColorLabel.style.display = isCustom ? "block" : "none";
+    // const isCustom = theme.value === "custom";
+    // colorLabel.style.display = isCustom ? "block" : "none";
+    // textColorLabel.style.display = isCustom ? "block" : "none";
   });
 
   function updateBackground(theme, primary = "#ffffff", text = "#000000") {
@@ -63,21 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     switch (theme) {
       case "dark":
-        bgColor = "#222";
-        fgColor = "#fff";
+        bgColor = "#232323";
+        fgColor = "#ffffff";
         break;
       case "blue":
         bgColor = "#d0e8ff";
         fgColor = "#000";
         break;
-      case "custom":
-        bgColor = primary;
-        fgColor = text;
-        break;
+      // case "custom":
+      //   bgColor = primary;
+      //   fgColor = text;
+      //   break;
       case "light":
       default:
-        bgColor = "#ffffff";
-        fgColor = "#000000";
+        bgColor = "#fafafa";
+        fgColor = "#222222";
     }
 
     // Apply styles to both views
@@ -102,9 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedColor = primaryColor.value;
     const selectedTextColor = textColor.value;
 
-    const isCustom = selectedTheme === "custom";
-    colorLabel.style.display = isCustom ? "block" : "none";
-    textColorLabel.style.display = isCustom ? "block" : "none";
+    // const isCustom = selectedTheme === "custom";
+    // colorLabel.style.display = isCustom ? "block" : "none";
+    // textColorLabel.style.display = isCustom ? "block" : "none";
 
     updateBackground(selectedTheme, selectedColor, selectedTextColor);
 
@@ -116,23 +116,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle background color input
   primaryColor.addEventListener("input", () => {
     const color = primaryColor.value;
-    if (theme.value === "custom") {
-      updateBackground("custom", color, textColor.value);
-      chrome.storage.local.set({ primaryColor: color }, () => {
-        console.log("[Popup] Background color saved:", color);
-      });
-    }
+    // if (theme.value === "custom") {
+    //   updateBackground("custom", color, textColor.value);
+    //   chrome.storage.local.set({ primaryColor: color }, () => {
+    //     console.log("[Popup] Background color saved:", color);
+    //   });
+    // }
   });
 
   // Handle text color input
   textColor.addEventListener("input", () => {
     const color = textColor.value;
-    if (theme.value === "custom") {
-      updateBackground("custom", primaryColor.value, color);
-      chrome.storage.local.set({ textColor: color }, () => {
-        console.log("[Popup] Text color saved:", color);
-      });
-    }
+    // if (theme.value === "custom") {
+    //   updateBackground("custom", primaryColor.value, color);
+    //   chrome.storage.local.set({ textColor: color }, () => {
+    //     console.log("[Popup] Text color saved:", color);
+    //   });
+    // }
   });
 
   // Save button click
