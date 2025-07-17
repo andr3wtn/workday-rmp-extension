@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load saved settings
   chrome.storage.local.get(["theme", "primaryColor", "textColor"], (data) => {
-    console.log("[Popup] Loaded settings:", data);
+    console.debug("[Popup] Loaded settings:", data);
 
     if (data.theme) theme.value = data.theme;
     if (data.primaryColor) primaryColor.value = data.primaryColor;
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function updateBackground(theme, primary = "#ffffff", text = "#000000") {
-    console.log(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
+    console.debug(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
     let bgColor = "#ffffff";
     let fgColor = "#000000";
 
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateBackground(selectedTheme, selectedColor, selectedTextColor);
 
     chrome.storage.local.set({ theme: selectedTheme }, () => {
-      console.log("[Popup] Theme saved");
+      console.debug("[Popup] Theme saved");
     });
   });
 
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error saving settings:", chrome.runtime.lastError);
         alert("Failed to save settings.");
       } else {
-        console.log("[Popup] Settings saved:", settings);
+        console.debug("[Popup] Settings saved:", settings);
         saveBtn.innerText = "Saved!";
         setTimeout(() => saveBtn.innerText = "Save", 2000);
       }
@@ -170,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Run Automation
   runBtn.addEventListener("click", () => {
-    console.log('run button clciked');
     const semesterSelect = document.querySelector("#semester");
     const selectedOption = semesterSelect.selectedOptions[0];
     const season = selectedOption.dataset.season;
@@ -199,7 +198,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   const extensionVersionSpan = document.querySelector('#extensionVersion');
-  console.log('234');
   if (extensionVersionSpan) {
     extensionVersionSpan.textContent = chrome.runtime.getManifest().version;
   }
