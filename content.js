@@ -314,46 +314,82 @@ async function runAutomation(season, year, academicLevel) {
     
 }
 
+/**
+ * Scrolls through a virtualized dropdown list and selects the desired school year element.
+ *
+ * @param {string} season - The semester season, e.g., "Fall" or "Spring".
+ * @param {number} year   - The target year, e.g., 2025. 
+ *                         (If season is "Spring", it will search the previous academic year.
+ *                          i.e. Spring 2025 => Searches 2024-2025
+ *                               Fall 2025 => Searches 2025-2026
+ * 
+ * This function handles lazy-loaded lists (React Virtualized) by:
+ *  1. Dynamically scrolling the list in small steps.
+ *  2. Checking the visible list text for the desired "YYYY-YYYY+1" string.
+ *  3. Waiting for content changes after each scroll instead of relying only on scrollTop.
+ *  4. Stopping when the desired item is found OR when the list stops updating (raeched the end).
+ */
 async function scrollAndSelectYear(season, year) {
-    const SCROLL_STEP = 200;
-    const DELAY = 50;
+    const SCROLL_STEP = 200; // number of pixels scrolled per iteration
+    const DELAY = 75;
 
-    // School year cutoff logic
+    // Compute the academic year string to search for.
+    // If season is Spring, the academic year starts in the *previous* year.
     const startYear = season == 'Spring' ? Number(year - 1): Number(year); // if it's spring, then start year is the year before
     const targetText = `${startYear}-${ (startYear + 1) }`; // e.g. targetText = 2025-2026
 
-    let previousScrollTop = -1;
-
+    // Wait until the virtualized list container appears in the DOM
     const scrollContainer = await waitForElement('.ReactVirtualized__Grid.ReactVirtualized__List');
 
-    // Error where scroll container not found
+    // Abort if scroll container not found
     if (!scrollContainer) {
         console.error("Scroll container not found.");
         return;
     }
 
+    let lastTexts = []; // Keeps track of previously visible year texts & compare with newer ones
+    let sameTextCount = 0; // Keeps track of how many consecutive iterations show no new content
     while (true){
-        const options = [...scrollContainer.querySelectorAll('[data-automation-id="promptOption"]')];
+      // Get all currently visible options
+      const options = [...scrollContainer.querySelectorAll('[data-automation-id="promptOption"]')];
+
+      // Convert the option elements into an array of text strings (e.g. ["2002-2003", "2003-2004", ...])
+      const texts = options.map(el => el.textContent.trim());
+
+        // Check if the desired year (e.g., "2025-2026") is currently visible
         const match = options.find(el => el.textContent.includes(targetText));
-        if (match) {
+        if (match) { // if so, click it & exit
             match.click();
             return;
         }
 
-        if (scrollContainer.scrollTop === previousScrollTop) {
+        if (arraysEqual(texts, lastTexts)) {
+          sameTextCount++;
+        } else {
+          sameTextCount = 0; // reset if new data loaded
+        }
+
+        // If no text update was found after 3 iterations, break out of the loop
+        if (sameTextCount >= 3) {
           console.warn(`Reached end of list, "${targetText}" not found.`);
           return;
         }
-
         
-        previousScrollTop = scrollContainer.scrollTop;
+        lastTexts = texts;
         scrollContainer.scrollTop += SCROLL_STEP;
+
         await sleep(DELAY);
     }
 }
 
+/* ----------- Helper Functions ----------- */
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  return a.every((val, i) => val === b[i]);
 }
 
 function waitForElement(selector, timeout = 5000) {
