@@ -2,6 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     width: 270px;
+    font-size: 95%;
     background-color: #e0e0e0;
     box-sizing: border-box;
     font-family: "Segoe UI", sans-serif;
@@ -94,4 +95,14 @@ h3, h4 {
 
 a, a:visited {
     color: inherit;
+}
+
+.textsm {
+    font-size: 0.9rem;
+}
+
+#calendar-button {
+    font-weight: 200;
+    border-radius: 5px;
+    display: inline-block;
 }
