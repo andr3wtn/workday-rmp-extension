@@ -1,4 +1,4 @@
-console.debug("popup.js loaded");
+// console.debug("popup.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
   populateSemesterSelect();
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Load saved settings
   chrome.storage.sync.get(["theme", "primaryColor", "textColor"], (data) => {
-    console.log("[Popup] Loaded settings:", data);
+    // console.log("[Popup] Loaded settings:", data); // DEBUG
 
     if (data.theme) theme.value = data.theme;
     if (data.primaryColor) primaryColor.value = data.primaryColor;
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function updateBackground(theme, primary = "#ffffff", text = "#000000") {
-    console.log(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
+    // console.log(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
     let bgColor = "#ffffff";
     let fgColor = "#000000";
 

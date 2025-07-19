@@ -48,7 +48,7 @@ input[type="color"], input[type="checkbox"] {
     text-align: center;
 }
 
-button {
+button, #calendar-button {
     margin: 15px auto 0;
     width: 80%;
     padding: 6px;
@@ -58,7 +58,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:hover ,#calendar-button:hover {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
@@ -105,4 +105,15 @@ a, a:visited {
     font-weight: 200;
     border-radius: 5px;
     display: inline-block;
+    text-decoration: none;
+}
+
+#calender-icon {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+svg {
+    width: 15px;
+    height: 15px;
+    font-weight: 200;
 }
