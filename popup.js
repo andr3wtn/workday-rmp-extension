@@ -1,9 +1,9 @@
-console.log("popup.js loaded");
+// console.debug("popup.js loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
   populateSemesterSelect();
 
-  chrome.storage.local.get(["lastUsedSemester", "lastUsedAcademicLevels"], (data) => {
+  chrome.storage.sync.get(["lastUsedSemester", "lastUsedAcademicLevels"], (data) => {
     const { lastUsedSemester, lastUsedAcademicLevels } = data;
 
     if (!lastUsedSemester && !lastUsedAcademicLevels) {
@@ -42,8 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const optionsContainer = document.querySelector(".options-container");
 
   // Load saved settings
-  chrome.storage.local.get(["theme", "primaryColor", "textColor"], (data) => {
-    console.debug("[Popup] Loaded settings:", data);
+  chrome.storage.sync.get(["theme", "primaryColor", "textColor"], (data) => {
+    // console.log("[Popup] Loaded settings:", data); // DEBUG
 
     if (data.theme) theme.value = data.theme;
     if (data.primaryColor) primaryColor.value = data.primaryColor;
@@ -51,33 +51,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateBackground(theme.value, primaryColor.value, textColor.value);
 
-    // const isCustom = theme.value === "custom";
-    // colorLabel.style.display = isCustom ? "block" : "none";
-    // textColorLabel.style.display = isCustom ? "block" : "none";
+    const isCustom = theme.value === "custom";
+    colorLabel.style.display = isCustom ? "block" : "none";
+    textColorLabel.style.display = isCustom ? "block" : "none";
   });
 
   function updateBackground(theme, primary = "#ffffff", text = "#000000") {
-    console.debug(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
+    // console.log(`[Popup] Updating background: ${theme}, BG: ${primary}, Text: ${text}`);
     let bgColor = "#ffffff";
     let fgColor = "#000000";
 
     switch (theme) {
       case "dark":
-        bgColor = "#232323";
-        fgColor = "#ffffff";
+        bgColor = "#222";
+        fgColor = "#fff";
         break;
       case "blue":
         bgColor = "#d0e8ff";
         fgColor = "#000";
         break;
-      // case "custom":
-      //   bgColor = primary;
-      //   fgColor = text;
-      //   break;
+      case "custom":
+        bgColor = primary;
+        fgColor = text;
+        break;
       case "light":
       default:
-        bgColor = "#fafafa";
-        fgColor = "#222222";
+        bgColor = "#ffffff";
+        fgColor = "#000000";
     }
 
     // Apply styles to both views
@@ -102,13 +102,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedColor = primaryColor.value;
     const selectedTextColor = textColor.value;
 
-    // const isCustom = selectedTheme === "custom";
-    // colorLabel.style.display = isCustom ? "block" : "none";
-    // textColorLabel.style.display = isCustom ? "block" : "none";
+    const isCustom = selectedTheme === "custom";
+    colorLabel.style.display = isCustom ? "block" : "none";
+    textColorLabel.style.display = isCustom ? "block" : "none";
 
     updateBackground(selectedTheme, selectedColor, selectedTextColor);
 
-    chrome.storage.local.set({ theme: selectedTheme }, () => {
+    chrome.storage.sync.set({ theme: selectedTheme }, () => {
       console.debug("[Popup] Theme saved");
     });
   });
@@ -116,45 +116,37 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle background color input
   primaryColor.addEventListener("input", () => {
     const color = primaryColor.value;
-    // if (theme.value === "custom") {
-    //   updateBackground("custom", color, textColor.value);
-    //   chrome.storage.local.set({ primaryColor: color }, () => {
-    //     console.log("[Popup] Background color saved:", color);
-    //   });
-    // }
+    if (theme.value === "custom") {
+      updateBackground("custom", color, textColor.value);
+      chrome.storage.sync.set({ primaryColor: color }, () => {
+        console.debug("[Popup] Background color saved:", color);
+      });
+    }
   });
 
   // Handle text color input
   textColor.addEventListener("input", () => {
     const color = textColor.value;
-    // if (theme.value === "custom") {
-    //   updateBackground("custom", primaryColor.value, color);
-    //   chrome.storage.local.set({ textColor: color }, () => {
-    //     console.log("[Popup] Text color saved:", color);
-    //   });
-    // }
+    if (theme.value === "custom") {
+      updateBackground("custom", primaryColor.value, color);
+      chrome.storage.sync.set({ textColor: color }, () => {
+        console.debug("[Popup] Text color saved:", color);
+      });
+    }
   });
 
   // Save button click
   saveBtn.addEventListener("click", () => {
-    const settings = {
+    chrome.storage.sync.set({
       theme: theme.value,
       primaryColor: primaryColor.value,
       textColor: textColor.value
-    };
+    }, () => {
 
-    chrome.storage.local.set(settings, () => {
-      if (chrome.runtime.lastError) {
-        console.error("Error saving settings:", chrome.runtime.lastError);
-        alert("Failed to save settings.");
-      } else {
-        console.debug("[Popup] Settings saved:", settings);
-        saveBtn.innerText = "Saved!";
-        setTimeout(() => saveBtn.innerText = "Save", 2000);
-      }
+      saveBtn.innerText = "Saved!";
+      setTimeout(() => saveBtn.innerText = "Save", 2000);
     });
   });
-
 
   // // Switch to More Settings view
   // openOptions.addEventListener("click", () => {
@@ -184,10 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
       alert('Please select at least one academic level!');
     }
 
-    chrome.storage.local.set({
+    chrome.storage.sync.set({
       lastUsedSemester: `${season} ${year}`,
       lastUsedAcademicLevels: academicLevels
-    }, () => { console.log('Last used settings saved.')});
+    }, () => { console.debug('Last used settings saved.')});
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, {
@@ -222,5 +214,3 @@ function populateSemesterSelect() {
     }
   }
 }
-
-

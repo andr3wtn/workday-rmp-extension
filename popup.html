@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>RMP Extension Settings</title>
-    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="style.css">
   </head>
   <body class="container">
     <!-- MAIN SETTINGS VIEW -->
@@ -39,6 +39,26 @@
       </section>
 
       <section>
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10m-11 4h12M4 21h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          Class Schedule Converter</h3>
+        <p class="textsm">Easily export your class schedule to Google Calendar or download it for your local calendar app.</p>
+        <div class="button-container">
+          <a 
+            id="calendar-button"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://andr3wtn.github.io/workday-rmp-extension/calendar"
+          >
+            Convert Your Schedule
+          </a>
+        </div>
+
+      </section>
+
+      <section>
         <h3>Customize Theme</h3>
 
         <label>Color Scheme:
@@ -46,7 +66,7 @@
             <option value="light">Light</option>
             <option value="dark">Dark</option>
             <option value="blue">Blue</option>
-            <!-- <option value="custom">Custom</option> -->
+            <option value="custom">Custom</option>
           </select>
         </label>
 
@@ -72,7 +92,7 @@
            to review on google web store.
         </p>
 
-        <p id="copyright">Workday RMP Helper | Version <span id="extensionVersion">2.1.2</span></p>
+        <p id="copyright">Workday RMP Helper | Version <span id="extensionVersion">2.3.3</span></p>
 
       </footer>
     </div>
